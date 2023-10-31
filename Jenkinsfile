@@ -54,6 +54,7 @@ stages {
                 docker login -u $DOCKER_ID -p $DOCKER_PASS
                 docker push $DOCKER_ID/$DOCKER_IMAGE/movie:$DOCKER_TAG
                 sleep 3
+                docker login -u $DOCKER_ID -p $DOCKER_PASS
                 docker push $DOCKER_ID/$DOCKER_IMAGE/cast:$DOCKER_TAG
                 '''
                 }
