@@ -34,7 +34,7 @@ stages {
                     sh '''
                     docker run -d -p 80:80 --name prod-movie $DOCKER_ID/$DOCKER_IMAGE/movie:$DOCKER_TAG
                     sleep 10
-                    docker run -d -p 80:70 --name prod-cast $DOCKER_ID/$DOCKER_IMAGE/cast:$DOCKER_TAG
+                    docker run -d -p 80:80 --name prod-cast $DOCKER_ID/$DOCKER_IMAGE/cast:$DOCKER_TAG
                     sleep 10
                     '''
                     }
