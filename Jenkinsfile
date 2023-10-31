@@ -6,12 +6,23 @@ DOCKER_TAG = "v.${BUILD_ID}.0" // we will tag our images with the current build 
 }
 agent any // Jenkins will be able to select all available agents
 stages {
-        stage(' Docker Build'){ // docker build image stage
+        stage(' Docker Build movie service'){ // docker build image prod
             steps {
                 script {
                 sh '''
-                 docker rm -f prod
-                 docker build -t $DOCKER_ID/$DOCKER_IMAGE:$DOCKER_TAG exam/
+                 docker rm -f prod-movie
+                 docker build -t $DOCKER_ID/$DOCKER_IMAGE/movie:$DOCKER_TAG movie-service/
+                sleep 6
+                '''
+                }
+            }
+        }
+        stage(' Docker Build cast service'){ // docker build image prod
+            steps {
+                script {
+                sh '''
+                 docker rm -f prod-cast
+                 docker build -t $DOCKER_ID/$DOCKER_IMAGE/cast:$DOCKER_TAG movie-service/
                 sleep 6
                 '''
                 }
@@ -21,7 +32,9 @@ stages {
                 steps {
                     script {
                     sh '''
-                    docker run -d -p 80:80 --name prod $DOCKER_ID/$DOCKER_IMAGE:$DOCKER_TAG
+                    docker run -d -p 80:80 --name prod-movie $DOCKER_ID/$DOCKER_IMAGE/movie:$DOCKER_TAG
+                    sleep 10
+                    docker run -d -p 80:70 --name prod-cast $DOCKER_ID/$DOCKER_IMAGE/cast:$DOCKER_TAG
                     sleep 10
                     '''
                     }
@@ -39,7 +52,9 @@ stages {
                 script {
                 sh '''
                 docker login -u $DOCKER_ID -p $DOCKER_PASS
-                docker push $DOCKER_ID/$DOCKER_IMAGE:$DOCKER_TAG
+                docker push $DOCKER_ID/$DOCKER_IMAGE/movie:$DOCKER_TAG
+                sleep 3
+                docker push $DOCKER_ID/$DOCKER_IMAGE/cast:$DOCKER_TAG
                 '''
                 }
             }
