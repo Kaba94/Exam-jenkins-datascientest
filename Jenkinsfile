@@ -11,7 +11,7 @@ stages {
                 script {
                 sh '''
                  docker rm -f prod
-                 docker build -t $DOCKER_ID/$DOCKER_IMAGE:$DOCKER_TAG .
+                 docker build -t $DOCKER_ID/$DOCKER_IMAGE:$DOCKER_TAG exam/
                 sleep 6
                 '''
                 }
