@@ -10,7 +10,7 @@ stages {
             steps {
                 script {
                 sh '''
-                 docker rm -f stag-movie
+                 docker rm -f dev-movie
                  docker build -t $DOCKER_ID/$DOCKER_IMAGE-movie:$DOCKER_TAG movie-service/
                 sleep 6
                 '''
@@ -21,7 +21,7 @@ stages {
             steps {
                 script {
                 sh '''
-                 docker rm -f stag-cast
+                 docker rm -f dev-cast
                  docker build -t $DOCKER_ID/$DOCKER_IMAGE-cast:$DOCKER_TAG cast-service/
                 sleep 6
                 '''
@@ -32,9 +32,9 @@ stages {
                 steps {
                     script {
                     sh '''
-                    docker run -d -p 80:80 --name stag-movie $DOCKER_ID/$DOCKER_IMAGE-movie:$DOCKER_TAG
+                    docker run -d -p 80:80 --name dev-movie $DOCKER_ID/$DOCKER_IMAGE-movie:$DOCKER_TAG
                     sleep 10
-                    docker run -d -p 80:70 --name stag-cast $DOCKER_ID/$DOCKER_IMAGE-cast:$DOCKER_TAG
+                    docker run -d -p 80:70 --name dev-cast $DOCKER_ID/$DOCKER_IMAGE-cast:$DOCKER_TAG
                     sleep 10
                     '''
                     }
@@ -76,7 +76,7 @@ stages {
 
         }
 
-stage('Deploiement en staging'){
+stage('Deploiement en dev'){
         environment
         {
         KUBECONFIG = credentials("config") // we retrieve  kubeconfig from secret file called config saved on jenkins
@@ -91,7 +91,7 @@ stage('Deploiement en staging'){
                 cp exam/values.yaml values.yml
                 cat values.yml
                 sed -i "s+tag.*+tag: ${DOCKER_TAG}+g" values.yml
-                helm upgrade --install test-chart exam --values=values.yml --namespace staging
+                helm upgrade --install test-chart exam --values=values.yml --namespace dev
                 '''
                 }
             }
