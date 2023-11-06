@@ -17,24 +17,11 @@ stages {
                 }
             }
         }
-        stage(' Docker Build cast service'){ // docker build image prod
-            steps {
-                script {
-                sh '''
-                 docker rm -f prod-cast
-                 docker build -t $DOCKER_ID/$DOCKER_IMAGE-cast:$DOCKER_TAG cast-service/
-                sleep 6
-                '''
-                }
-            }
-        }
         stage(' Docker run'){ // run container from our builded image
                 steps {
                     script {
                     sh '''
                     docker run -d -p 80:80 --name prod-movie $DOCKER_ID/$DOCKER_IMAGE-movie:$DOCKER_TAG
-                    sleep 10
-                    docker run -d -p 80:70 --name prod-cast $DOCKER_ID/$DOCKER_IMAGE-cast:$DOCKER_TAG
                     sleep 10
                     '''
                     }
@@ -53,23 +40,6 @@ stages {
                 sh '''
                 docker login -u $DOCKER_ID -p $DOCKER_PASS
                 docker push $DOCKER_ID/$DOCKER_IMAGE-movie:$DOCKER_TAG
-                '''
-                }
-            }
-
-        }
-        stage('Docker Push cast'){ //we pass the built image to our docker hub account
-            environment
-            {
-                DOCKER_PASS = credentials("DOCKER_HUB_PASS") // we retrieve  docker password from secret text called docker_hub_pass saved on jenkins
-            }
-
-            steps {
-
-                script {
-                sh '''
-                docker login -u $DOCKER_ID -p $DOCKER_PASS
-                docker push $DOCKER_ID/$DOCKER_IMAGE-cast:$DOCKER_TAG
                 '''
                 }
             }
